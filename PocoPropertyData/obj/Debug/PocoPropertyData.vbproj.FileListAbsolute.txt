@@ -1,0 +1,8 @@
+C:\Development\Libraries\PocoPropertyData\PocoPropertyData\bin\Debug\PocoPropertyData.dll
+C:\Development\Libraries\PocoPropertyData\PocoPropertyData\bin\Debug\PocoPropertyData.pdb
+C:\Development\Libraries\PocoPropertyData\PocoPropertyData\bin\Debug\PocoPropertyData.xml
+C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.Resources.resources
+C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.vbproj.GenerateResource.Cache
+C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.dll
+C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.xml
+C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.pdb
