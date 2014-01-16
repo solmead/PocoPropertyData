@@ -32,7 +32,7 @@ Public Module Extensions
         Dim itemList = New List(Of TItem)()
         For Each row In table.Rows
             Dim item = getNewObject()
-            For col = 0 To table.Columns.Count
+            For col = 0 To table.Columns.Count - 1
                 Try
                     Dim headCol = table.Columns(col).ColumnName.Trim()
                     Dim column = row(col)
@@ -114,10 +114,26 @@ Public Module Extensions
         Next
     End Sub
     <Extension>
-    Public Function AsCollection(Of TItem As {Class})(item As TItem) As NameValueCollection
+    Public Function PropertiesAsCollection(Of TItem As {Class})(item As TItem) As NameValueCollection
         Dim f As New NameValueCollection
         For Each p In item.GetPropertyNames(onlyBaseTypes:=True)
-            f(p) = item.GetValue(p)
+            Dim v = item.GetValue(p)
+            If (v IsNot Nothing) Then
+                v = v.ToString()
+            End If
+            f(p) = v
+        Next
+        Return f
+    End Function
+    <Extension>
+    Public Function PropertiesAsDictionary(Of TItem As {Class})(item As TItem) As Dictionary(Of String, String)
+        Dim f As New Dictionary(Of String, String)
+        For Each p In item.GetPropertyNames(onlyBaseTypes:=True)
+            Dim v = item.GetValue(p)
+            If (v IsNot Nothing) Then
+                v = v.ToString()
+            End If
+            f.Add(p, v)
         Next
         Return f
     End Function
