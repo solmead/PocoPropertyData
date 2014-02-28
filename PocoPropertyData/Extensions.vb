@@ -30,7 +30,7 @@ Public Module Extensions
         Next
 
         Dim itemList = New List(Of TItem)()
-        For Each row In table.Rows
+        For Each row As DataRow In table.Rows
             Dim item = getNewObject()
             For col = 0 To table.Columns.Count - 1
                 Try
@@ -41,46 +41,52 @@ Public Module Extensions
                     End If
                     If (item.DoesPropertyExist(headCol)) Then
                         Dim tpe = item.GetPropertyType(headCol)
-                        Dim tName = tpe.FullName.ToUpper()
-                        If (tName.Contains("DATETIME")) Then
-                            Dim v As Date
-                            DateTime.TryParse(column.ToString(), v)
-                            item.SetValue(headCol, v)
-                        ElseIf (tName.Contains("BOOL")) Then
-                            column = column.ToString().ToUpper().Replace("YES", "TRUE").Replace("NO", "FALSE").Replace("0", "FALSE").
-                                    Replace("1", "TRUE")
-                            Dim v As Boolean
-                            Boolean.TryParse(column, v)
-                            item.SetValue(headCol, v)
-                        ElseIf (tName.Contains("INT")) Then
-                            column = column.ToString().Replace("$", "").Replace(",", "")
-                            Dim v As Double
-                            Double.TryParse(column, v)
-                            item.SetValue(headCol, CInt(v))
-                        ElseIf (tName.Contains("FLOAT")) Then
-                            column = column.ToString().Replace("$", "").Replace(",", "")
-                            Dim v As Single
-                            Single.TryParse(column, v)
-                            item.SetValue(headCol, v)
-                        ElseIf (tName.Contains("DOUBLE")) Then
-                            column = column.ToString().Replace("$", "").Replace(",", "")
-                            Dim v As Double
-                            Double.TryParse(column, v)
-                            item.SetValue(headCol, v)
-                        ElseIf (tName.Contains("LONG")) Then
-                            column = column.ToString().Replace("$", "").Replace(",", "")
-                            Dim v As Double
-                            Double.TryParse(column, CLng(v))
-                            item.SetValue(headCol, v)
-                        ElseIf (tName.Contains("DECIMAL")) Then
-                            column = column.ToString().Replace("$", "").Replace(",", "")
-                            Dim v As Decimal
-                            Decimal.TryParse(column, v)
-                            item.SetValue(headCol, v)
+                        If Not row.IsNull(col) Then
+                            Dim tName = tpe.FullName.ToUpper()
+                            If (tName.Contains("DATETIME")) Then
+                                Dim v As Date
+                                DateTime.TryParse(column.ToString(), v)
+                                item.SetValue(headCol, v)
+                            ElseIf (tName.Contains("BOOL")) Then
+                                column = column.ToString().ToUpper().Replace("YES", "TRUE").Replace("NO", "FALSE").Replace("0", "FALSE").
+                                        Replace("1", "TRUE")
+                                Dim v As Boolean
+                                Boolean.TryParse(column, v)
+                                item.SetValue(headCol, v)
+                            ElseIf (tName.Contains("INT")) Then
+                                column = column.ToString().Replace("$", "").Replace(",", "")
+                                Dim v As Double
+                                Double.TryParse(column, v)
+                                item.SetValue(headCol, CInt(v))
+                            ElseIf (tName.Contains("FLOAT")) Then
+                                column = column.ToString().Replace("$", "").Replace(",", "")
+                                Dim v As Single
+                                Single.TryParse(column, v)
+                                item.SetValue(headCol, v)
+                            ElseIf (tName.Contains("DOUBLE")) Then
+                                column = column.ToString().Replace("$", "").Replace(",", "")
+                                Dim v As Double
+                                Double.TryParse(column, v)
+                                item.SetValue(headCol, v)
+                            ElseIf (tName.Contains("LONG")) Then
+                                column = column.ToString().Replace("$", "").Replace(",", "")
+                                Dim v As Double
+                                Double.TryParse(column, CLng(v))
+                                item.SetValue(headCol, v)
+                            ElseIf (tName.Contains("DECIMAL")) Then
+                                column = column.ToString().Replace("$", "").Replace(",", "")
+                                Dim v As Decimal
+                                Decimal.TryParse(column, v)
+                                item.SetValue(headCol, v)
+                            Else
+
+                                Dim v = Convert.ChangeType(column, tpe)
+                                item.SetValue(headCol, v)
+                            End If
                         Else
-                            Dim v = Convert.ChangeType(column, tpe)
-                            item.SetValue(headCol, v)
+                            item.SetValue(headCol, Nothing)
                         End If
+
 
                     ElseIf (headCol <> "") Then
                         'Throw New Exception("Column Not Handled: [" + headCol + "]")
@@ -116,7 +122,7 @@ Public Module Extensions
     <Extension>
     Public Function PropertiesAsCollection(Of TItem As {Class})(item As TItem) As NameValueCollection
         Dim f As New NameValueCollection
-        For Each p In item.GetPropertyNames(onlyBaseTypes:=True)
+        For Each p In item.GetPropertyNames(onlyBaseTypes:=True, onlyWritable:=False)
             Dim v = item.GetValue(p)
             If (v IsNot Nothing) Then
                 v = v.ToString()
@@ -128,7 +134,7 @@ Public Module Extensions
     <Extension>
     Public Function PropertiesAsDictionary(Of TItem As {Class})(item As TItem) As Dictionary(Of String, String)
         Dim f As New Dictionary(Of String, String)
-        For Each p In item.GetPropertyNames(onlyBaseTypes:=True)
+        For Each p In item.GetPropertyNames(onlyBaseTypes:=True, onlyWritable:=False)
             Dim v = item.GetValue(p)
             If (v IsNot Nothing) Then
                 v = v.ToString()
