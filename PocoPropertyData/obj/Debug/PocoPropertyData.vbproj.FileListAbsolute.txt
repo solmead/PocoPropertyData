@@ -6,3 +6,4 @@ C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropert
 C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.dll
 C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.xml
 C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.pdb
+C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.vbprojResolveAssemblyReference.cache

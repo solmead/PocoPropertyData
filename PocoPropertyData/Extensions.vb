@@ -48,8 +48,7 @@ Public Module Extensions
                                 DateTime.TryParse(column.ToString(), v)
                                 item.SetValue(headCol, v)
                             ElseIf (tName.Contains("BOOL")) Then
-                                column = column.ToString().ToUpper().Replace("YES", "TRUE").Replace("NO", "FALSE").Replace("0", "FALSE").
-                                        Replace("1", "TRUE")
+                                column = column.ToString().ToUpper().Replace("YES", "TRUE").Replace("NO", "FALSE").Replace("0", "FALSE").Replace("N", "FALSE").Replace("Y", "TRUE").Replace("1", "TRUE")
                                 Dim v As Boolean
                                 Boolean.TryParse(column, v)
                                 item.SetValue(headCol, v)
@@ -171,7 +170,7 @@ Public Module Extensions
         Dim tp As Type = item.GetType
         Dim prop = tp.GetProperty(pName)
 
-        If (prop IsNot Nothing) Then
+        If (prop IsNot Nothing AndAlso prop.CanWrite) Then
             prop.SetValue(item, value, Nothing)
         End If
     End Sub
@@ -186,7 +185,7 @@ Public Module Extensions
         Dim retVal As Object = Nothing
         Dim tp As Type = item.GetType
         Dim prop = tp.GetProperty(pName)
-        If (prop IsNot Nothing) Then
+        If (prop IsNot Nothing AndAlso prop.CanRead) Then
             retVal = prop.GetValue(item, Nothing)
         End If
 
