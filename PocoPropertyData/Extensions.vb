@@ -4,6 +4,9 @@ Imports System.ComponentModel.DataAnnotations
 Imports System.ComponentModel
 Imports System.Runtime.CompilerServices
 Imports System.Collections.Specialized
+Imports System.Runtime.InteropServices
+Imports System.Linq.Expressions
+Imports PocoPropertyData
 
 Public Module Extensions
     <Extension>
@@ -35,63 +38,18 @@ Public Module Extensions
             For col = 0 To table.Columns.Count - 1
                 Try
                     Dim headCol = table.Columns(col).ColumnName.Trim()
-                    Dim column = row(col)
-                    If (mappings.ContainsKey(headCol)) Then
-                        headCol = mappings(headCol)
-                    End If
-                    If (item.DoesPropertyExist(headCol)) Then
-                        Dim tpe = item.GetPropertyType(headCol)
-                        If Not row.IsNull(col) Then
-                            Dim tName = tpe.FullName.ToUpper()
-                            If (tName.Contains("DATETIME")) Then
-                                Dim v As Date
-                                DateTime.TryParse(column.ToString(), v)
-                                item.SetValue(headCol, v)
-                            ElseIf (tName.Contains("BOOL")) Then
-                                column = column.ToString().ToUpper().Replace("YES", "TRUE").Replace("NO", "FALSE").Replace("0", "FALSE").Replace("N", "FALSE").Replace("Y", "TRUE").Replace("1", "TRUE")
-                                Dim v As Boolean
-                                Boolean.TryParse(column, v)
-                                item.SetValue(headCol, v)
-                            ElseIf (tName.Contains("INT")) Then
-                                column = column.ToString().Replace("$", "").Replace(",", "")
-                                Dim v As Double
-                                Double.TryParse(column, v)
-                                item.SetValue(headCol, CInt(v))
-                            ElseIf (tName.Contains("FLOAT")) Then
-                                column = column.ToString().Replace("$", "").Replace(",", "")
-                                Dim v As Single
-                                Single.TryParse(column, v)
-                                item.SetValue(headCol, v)
-                            ElseIf (tName.Contains("DOUBLE")) Then
-                                column = column.ToString().Replace("$", "").Replace(",", "")
-                                Dim v As Double
-                                Double.TryParse(column, v)
-                                item.SetValue(headCol, v)
-                            ElseIf (tName.Contains("LONG")) Then
-                                column = column.ToString().Replace("$", "").Replace(",", "")
-                                Dim v As Double
-                                Double.TryParse(column, CLng(v))
-                                item.SetValue(headCol, v)
-                            ElseIf (tName.Contains("DECIMAL")) Then
-                                column = column.ToString().Replace("$", "").Replace(",", "")
-                                Dim v As Decimal
-                                Decimal.TryParse(column, v)
-                                item.SetValue(headCol, v)
-                            Else
-
-                                Dim v = Convert.ChangeType(column, tpe)
-                                item.SetValue(headCol, v)
-                            End If
-                        Else
-                            item.SetValue(headCol, Nothing)
+                    If Not row.IsNull(col) Then
+                        Dim column = row(col)
+                        If (mappings.ContainsKey(headCol)) Then
+                            headCol = mappings(headCol)
                         End If
-
-
-                    ElseIf (headCol <> "") Then
-                        'Throw New Exception("Column Not Handled: [" + headCol + "]")
+                        item.SetProp(headCol, column)
+                    Else
+                        item.SetProp(headCol, Nothing)
                     End If
-                Catch ex As Exception
 
+                Catch ex As Exception
+                    Dim i = 0
                 End Try
             Next
 
@@ -101,6 +59,233 @@ Public Module Extensions
 
 
     End Function
+
+    <Extension>
+    Private Sub SetProp(Of TItem As {Class})(item As TItem, name As String, value As Object)
+        If (name.Contains(".")) Then
+            Dim tstr = Split(name, ".")
+            Dim tp As Type = item.GetPropertyType(tstr(0))
+            Dim pitem = item.GetValue(tstr(0))
+            If pitem Is Nothing Then
+                pitem = tp.Assembly.CreateInstance(tp.FullName)
+                item.SetValue(tstr(0), pitem)
+            End If
+
+            If TypeOf pitem Is IEnumerable Then
+
+            End If
+            Try
+                SetProp(Of Object)(pitem, name.Replace(tstr(0) & ".", ""), value)
+            Catch ex As Exception
+                Dim i = 0
+            End Try
+        Else
+            item.SetPropertyOn(name, value)
+        End If
+    End Sub
+    Public Function IsNullableType(ByVal myType As Type) As Boolean
+        Return (myType.IsGenericType) AndAlso (myType.GetGenericTypeDefinition() Is GetType(Nullable(Of )))
+    End Function
+
+    'Public Function GetAs(Of baseType As {tpe})(column As Object, tpe As Type) As baseType
+    '    Dim retVal As Object
+    '    If IsNullableType(tpe) Then
+    '        tpe = Nullable.GetUnderlyingType(tpe)
+    '    End If
+
+    '    Dim IsEnum = tpe.IsEnum
+
+    '    Dim tName = tpe.FullName.ToUpper()
+    '    If (tName.Contains("DATETIME")) Then
+    '        Dim v As Date
+    '        If column Is Nothing Then
+    '            column = ""
+    '        End If
+
+    '        DateTime.TryParse(column.ToString(), v)
+    '        item.SetValue(headCol, v)
+    '    ElseIf (tName.Contains("BOOL")) Then
+    '        If column Is Nothing Then
+    '            column = ""
+    '        End If
+    '        column = column.ToString().ToUpper().Replace("YES", "TRUE").Replace("NO", "FALSE").Replace("0", "FALSE").Replace("N", "FALSE").Replace("Y", "TRUE").Replace("1", "TRUE")
+    '        Dim v As Boolean
+    '        Boolean.TryParse(column, v)
+    '        item.SetValue(headCol, v)
+    '    ElseIf (tName.Contains("INT")) Then
+    '        If column Is Nothing Then
+    '            column = ""
+    '        End If
+    '        column = column.ToString().Replace("$", "").Replace(",", "")
+    '        Dim v As Double
+    '        Double.TryParse(column, v)
+    '        item.SetValue(headCol, CInt(v))
+    '    ElseIf (tName.Contains("FLOAT")) Then
+    '        If column Is Nothing Then
+    '            column = ""
+    '        End If
+    '        column = column.ToString().Replace("$", "").Replace(",", "")
+    '        Dim v As Single
+    '        Single.TryParse(column, v)
+    '        item.SetValue(headCol, v)
+    '    ElseIf (tName.Contains("DOUBLE")) Then
+    '        If column Is Nothing Then
+    '            column = ""
+    '        End If
+    '        column = column.ToString().Replace("$", "").Replace(",", "")
+    '        Dim v As Double
+    '        Double.TryParse(column, v)
+    '        item.SetValue(headCol, v)
+    '    ElseIf (tName.Contains("LONG")) Then
+    '        If column Is Nothing Then
+    '            column = ""
+    '        End If
+    '        column = column.ToString().Replace("$", "").Replace(",", "")
+    '        Dim v As Double
+    '        Double.TryParse(column, CLng(v))
+    '        item.SetValue(headCol, v)
+    '    ElseIf (tName.Contains("DECIMAL")) Then
+    '        If column Is Nothing Then
+    '            column = ""
+    '        End If
+    '        column = column.ToString().Replace("$", "").Replace(",", "")
+    '        Dim v As Decimal
+    '        Decimal.TryParse(column, v)
+    '        item.SetValue(headCol, v)
+    '    Else
+    '        If Not IsEnum Then
+    '            Dim v = Convert.ChangeType(column, tpe)
+    '            item.SetValue(headCol, v)
+    '        Else
+    '            If column Is Nothing Then
+    '                column = ""
+    '            End If
+    '            Try
+    '                Dim exists = (From t In [Enum].GetNames(tpe) Where t.ToUpper() = column.ToString().Trim().ToUpper() Select t).Any()
+    '                If (exists) Then
+    '                    Dim v = [Enum].Parse(tpe, column.ToString())
+    '                    item.SetValue(headCol, v)
+    '                End If
+    '            Catch ex As Exception
+    '                Dim i = 0
+    '            End Try
+    '        End If
+    '    End If
+
+
+    '    Dim v = Convert.ChangeType(column, tpe)
+    'End Function
+
+    <Extension>
+    Public Sub SetPropertyOn(Of TItem As {Class})(item As TItem, headCol As String, column As Object)
+
+        If (item.DoesPropertyExist(headCol)) Then
+            Dim tpe = item.GetPropertyType(headCol)
+            Try
+                If column Is Nothing AndAlso IsNullableType(tpe) Then
+                    'Dim v = Convert.ChangeType(column, tpe)
+                    item.SetValue(headCol, column)
+                    Return
+                End If
+            Catch ex As Exception
+
+            End Try
+
+            If IsNullableType(tpe) Then
+                tpe = Nullable.GetUnderlyingType(tpe)
+            End If
+
+            Dim IsEnum = tpe.IsEnum
+
+            Dim tName = tpe.FullName.ToUpper()
+            If (tName.Contains("DATETIME")) Then
+                Dim v As Date
+                If column Is Nothing Then
+                    column = ""
+                End If
+
+                DateTime.TryParse(column.ToString(), v)
+                item.SetValue(headCol, v)
+            ElseIf (tName.Contains("BOOL")) Then
+                If column Is Nothing Then
+                    column = ""
+                End If
+                column = column.ToString().ToUpper().Replace("YES", "TRUE").Replace("NO", "FALSE").Replace("0", "FALSE").Replace("N", "FALSE").Replace("Y", "TRUE").Replace("1", "TRUE")
+                Dim v As Boolean
+                Boolean.TryParse(column, v)
+                item.SetValue(headCol, v)
+            ElseIf (tName.Contains("INT")) Then
+                If column Is Nothing Then
+                    column = ""
+                End If
+                column = column.ToString().Replace("$", "").Replace(",", "")
+                Dim v As Double
+                Double.TryParse(column, v)
+                item.SetValue(headCol, CInt(v))
+            ElseIf (tName.Contains("FLOAT")) Then
+                If column Is Nothing Then
+                    column = ""
+                End If
+                column = column.ToString().Replace("$", "").Replace(",", "")
+                Dim v As Single
+                Single.TryParse(column, v)
+                item.SetValue(headCol, v)
+            ElseIf (tName.Contains("DOUBLE")) Then
+                If column Is Nothing Then
+                    column = ""
+                End If
+                column = column.ToString().Replace("$", "").Replace(",", "")
+                Dim v As Double
+                Double.TryParse(column, v)
+                item.SetValue(headCol, v)
+            ElseIf (tName.Contains("LONG")) Then
+                If column Is Nothing Then
+                    column = ""
+                End If
+                column = column.ToString().Replace("$", "").Replace(",", "")
+                Dim v As Double
+                Double.TryParse(column, CLng(v))
+                item.SetValue(headCol, v)
+            ElseIf (tName.Contains("DECIMAL")) Then
+                If column Is Nothing Then
+                    column = ""
+                End If
+                column = column.ToString().Replace("$", "").Replace(",", "")
+                Dim v As Decimal
+                Decimal.TryParse(column, v)
+                item.SetValue(headCol, v)
+            Else
+                If Not IsEnum Then
+                    Dim v = Convert.ChangeType(column, tpe)
+                    item.SetValue(headCol, v)
+                Else
+                    If column Is Nothing Then
+                        column = ""
+                    End If
+                    Try
+                        Dim exists = (From t In [Enum].GetNames(tpe) Where t.ToUpper() = column.ToString().Trim().ToUpper() Select t).Any()
+                        If (exists) Then
+                            Dim v = [Enum].Parse(tpe, column.ToString())
+                            item.SetValue(headCol, v)
+                        Else
+                            item.SetValue(headCol, CInt(Val(column.ToString())))
+                        End If
+                    Catch ex As Exception
+                        Dim i = 0
+                    End Try
+                End If
+            End If
+
+
+
+        ElseIf (headCol <> "") Then
+
+            'Throw New Exception("Column Not Handled: [" + headCol + "]")
+        End If
+
+    End Sub
+
+
     <Extension>
     Public Function Clone(Of TItem As {Class})(item As TItem) As TItem
         Dim tp As Type = item.GetType()

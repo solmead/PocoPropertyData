@@ -6,3 +6,12 @@ C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropert
 C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.dll
 C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.xml
 C:\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.pdb
+\\psf\Home\Documents\Development\Libraries\PocoPropertyData\PocoPropertyData\bin\Debug\PocoPropertyData.dll
+\\psf\Home\Documents\Development\Libraries\PocoPropertyData\PocoPropertyData\bin\Debug\PocoPropertyData.pdb
+\\psf\Home\Documents\Development\Libraries\PocoPropertyData\PocoPropertyData\bin\Debug\PocoPropertyData.xml
+\\psf\Home\Documents\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.Resources.resources
+\\psf\Home\Documents\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.vbproj.GenerateResource.Cache
+\\psf\Home\Documents\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.dll
+\\psf\Home\Documents\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.xml
+\\psf\Home\Documents\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.pdb
+\\psf\Home\Documents\Development\Libraries\PocoPropertyData\PocoPropertyData\obj\Debug\PocoPropertyData.vbprojResolveAssemblyReference.cache
