@@ -190,8 +190,9 @@ Public Module Extensions
             Catch ex As Exception
 
             End Try
-
-            If IsNullableType(tpe) Then
+            Dim isNullable = IsNullableType(tpe)
+            Dim bTpe = tpe
+            If isNullable Then
                 tpe = Nullable.GetUnderlyingType(tpe)
             End If
 
@@ -268,7 +269,12 @@ Public Module Extensions
                             Dim v = [Enum].Parse(tpe, column.ToString())
                             item.SetValue(headCol, v)
                         Else
-                            item.SetValue(headCol, CInt(Val(column.ToString())))
+                            Dim num = CInt(Val(column.ToString()))
+
+                            Dim numexists = (From t In [Enum].GetValues(tpe) Where t = num Select t).Any()
+                            If (numexists) Then
+                                item.SetValue(headCol, num)
+                            End If
                         End If
                     Catch ex As Exception
                         Dim i = 0
