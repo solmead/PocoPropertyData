@@ -9,8 +9,75 @@ Imports System.Linq.Expressions
 Imports PocoPropertyData
 
 Public Module Extensions
+
     <Extension>
-    Public Function ToList(Of TItem As {Class})(table As DataTable, Optional getNewObject As Func(Of TItem) = Nothing, Optional columnMapping As Dictionary(Of String, String) = Nothing) As List(Of TItem)
+    Public Function ToItem(Of TItem As {Class})(row As DataRow, table As DataTable, Optional getNewObject As Func(Of TItem) = Nothing, Optional columnMapping As Dictionary(Of String, String) = Nothing, optional afterLoad As Action(Of TItem, DataTable, DataRow, List(of string)) = nothing) As TItem
+
+        If getNewObject Is Nothing Then
+            getNewObject = Function()
+                Dim tp As Type = GetType(TItem)
+                Dim newItem As TItem = CType(tp.Assembly.CreateInstance(tp.FullName), TItem)
+                Return newItem
+                           End Function
+        End If
+
+        Dim mappings = GetDefinedMappings(getNewObject())
+        If columnMapping Is Nothing Then
+            columnMapping = New Dictionary(Of String, String)()
+        End If
+
+        For Each key In columnMapping.Keys
+            If (Not mappings.ContainsKey(key)) Then
+                mappings.Add(key, columnMapping(key))
+            Else
+                mappings(key) = columnMapping(key)
+            End If
+        Next
+
+        Dim colNames = (from c as DataColumn in table.Columns select c.ColumnName).ToList()
+
+        Dim item = getNewObject()
+        For col = 0 To table.Columns.Count - 1
+            Try
+                Dim origColumnName = table.Columns(col).ColumnName.Trim()
+
+                If Not row.IsNull(col) Then
+                    Dim column = row(col)
+                    dim newColumnName = origColumnName
+                    If (mappings.ContainsKey(origColumnName)) Then
+                        newColumnName = mappings(origColumnName)
+                    End If
+                    If (item.DoesPropertyExist(newColumnName)) then
+                        colNames.Remove(origColumnName)
+                        item.SetProp(newColumnName, column, mappings)
+                    end if
+                Else
+                    dim newColumnName = origColumnName
+                    If (mappings.ContainsKey(origColumnName)) Then
+                        newColumnName = mappings(origColumnName)
+                    End If
+                    If (item.DoesPropertyExist(newColumnName)) then
+                        colNames.Remove(origColumnName)
+                        item.SetProp(newColumnName, Nothing, mappings)
+                    end if
+                End If
+
+            Catch ex As Exception
+                Dim i = 0
+            End Try
+        Next
+
+        If (afterLoad IsNot nothing) Then
+            afterLoad(item, table, row, colNames)
+        End If
+
+
+        Return item
+    End Function
+    
+
+    <Extension>
+    Public Function ToList(Of TItem As {Class})(table As DataTable, Optional getNewObject As Func(Of TItem) = Nothing, Optional columnMapping As Dictionary(Of String, String) = Nothing, optional afterLoad As Action(Of TItem, DataTable, DataRow, List(of string)) = nothing) As List(Of TItem)
         If getNewObject Is Nothing Then
             getNewObject = Function()
                                Dim tp As Type = GetType(TItem)
@@ -34,25 +101,7 @@ Public Module Extensions
 
         Dim itemList = New List(Of TItem)()
         For Each row As DataRow In table.Rows
-            Dim item = getNewObject()
-            For col = 0 To table.Columns.Count - 1
-                Try
-                    Dim headCol = table.Columns(col).ColumnName.Trim()
-                    If Not row.IsNull(col) Then
-                        Dim column = row(col)
-                        If (mappings.ContainsKey(headCol)) Then
-                            headCol = mappings(headCol)
-                        End If
-                        item.SetProp(headCol, column)
-                    Else
-                        item.SetProp(headCol, Nothing)
-                    End If
-
-                Catch ex As Exception
-                    Dim i = 0
-                End Try
-            Next
-
+            Dim item = row.ToItem(table, getNewObject, mappings, afterLoad)
             itemList.Add(item)
         Next
         Return itemList
@@ -60,8 +109,14 @@ Public Module Extensions
 
     End Function
 
+
+
+
     <Extension>
-    Private Sub SetProp(Of TItem As {Class})(item As TItem, name As String, value As Object)
+    Private Sub SetProp(Of TItem As {Class})(item As TItem, name As String, value As Object, optional mappings as Dictionary(Of string, string) = nothing)
+
+
+
         If (name.Contains(".")) Then
             Dim tstr = Split(name, ".")
             Dim tp As Type = item.GetPropertyType(tstr(0))
@@ -75,12 +130,12 @@ Public Module Extensions
 
             End If
             Try
-                SetProp(Of Object)(pitem, name.Replace(tstr(0) & ".", ""), value)
+                SetProp(Of Object)(pitem, name.Replace(tstr(0) & ".", ""), value, mappings)
             Catch ex As Exception
                 Dim i = 0
             End Try
         Else
-            item.SetPropertyOn(name, value)
+            item.SetPropertyOn(name, value, mappings)
         End If
     End Sub
     Public Function IsNullableType(ByVal myType As Type) As Boolean
@@ -177,14 +232,16 @@ Public Module Extensions
     'End Function
 
     <Extension>
-    Public Sub SetPropertyOn(Of TItem As {Class})(item As TItem, headCol As String, column As Object)
+    Public Sub SetPropertyOn(Of TItem As {Class})(item As TItem, headCol As String, column As Object, optional mappings as Dictionary(Of string, string) = nothing)
+
+
 
         If (item.DoesPropertyExist(headCol)) Then
             Dim tpe = item.GetPropertyType(headCol)
             Try
                 If column Is Nothing AndAlso IsNullableType(tpe) Then
                     'Dim v = Convert.ChangeType(column, tpe)
-                    item.SetValue(headCol, column)
+                    item.SetValue(headCol, column, mappings)
                     Return
                 End If
             Catch ex As Exception
@@ -206,7 +263,7 @@ Public Module Extensions
                 End If
 
                 DateTime.TryParse(column.ToString(), v)
-                item.SetValue(headCol, v)
+                item.SetValue(headCol, v, mappings)
             ElseIf (tName.Contains("BOOL")) Then
                 If column Is Nothing Then
                     column = ""
@@ -214,7 +271,7 @@ Public Module Extensions
                 column = column.ToString().ToUpper().Replace("YES", "TRUE").Replace("NO", "FALSE").Replace("0", "FALSE").Replace("N", "FALSE").Replace("Y", "TRUE").Replace("1", "TRUE")
                 Dim v As Boolean
                 Boolean.TryParse(column, v)
-                item.SetValue(headCol, v)
+                item.SetValue(headCol, v, mappings)
             ElseIf (tName.Contains("INT")) Then
                 If column Is Nothing Then
                     column = ""
@@ -222,7 +279,7 @@ Public Module Extensions
                 column = column.ToString().Replace("$", "").Replace(",", "")
                 Dim v As Double
                 Double.TryParse(column, v)
-                item.SetValue(headCol, CInt(v))
+                item.SetValue(headCol, CInt(v), mappings)
             ElseIf (tName.Contains("FLOAT")) Then
                 If column Is Nothing Then
                     column = ""
@@ -230,7 +287,7 @@ Public Module Extensions
                 column = column.ToString().Replace("$", "").Replace(",", "")
                 Dim v As Single
                 Single.TryParse(column, v)
-                item.SetValue(headCol, v)
+                item.SetValue(headCol, v, mappings)
             ElseIf (tName.Contains("DOUBLE")) Then
                 If column Is Nothing Then
                     column = ""
@@ -238,7 +295,7 @@ Public Module Extensions
                 column = column.ToString().Replace("$", "").Replace(",", "")
                 Dim v As Double
                 Double.TryParse(column, v)
-                item.SetValue(headCol, v)
+                item.SetValue(headCol, v, mappings)
             ElseIf (tName.Contains("LONG")) Then
                 If column Is Nothing Then
                     column = ""
@@ -246,7 +303,7 @@ Public Module Extensions
                 column = column.ToString().Replace("$", "").Replace(",", "")
                 Dim v As Double
                 Double.TryParse(column, CLng(v))
-                item.SetValue(headCol, v)
+                item.SetValue(headCol, v, mappings)
             ElseIf (tName.Contains("DECIMAL")) Then
                 If column Is Nothing Then
                     column = ""
@@ -254,7 +311,7 @@ Public Module Extensions
                 column = column.ToString().Replace("$", "").Replace(",", "")
                 Dim v As Decimal
                 Decimal.TryParse(column, v)
-                item.SetValue(headCol, v)
+                item.SetValue(headCol, v, mappings)
             Else
                 If Not IsEnum Then
                     Dim v = Convert.ChangeType(column, tpe)
@@ -267,13 +324,13 @@ Public Module Extensions
                         Dim exists = (From t In [Enum].GetNames(tpe) Where t.ToUpper() = column.ToString().Trim().ToUpper() Select t).Any()
                         If (exists) Then
                             Dim v = [Enum].Parse(tpe, column.ToString())
-                            item.SetValue(headCol, v)
+                            item.SetValue(headCol, v, mappings)
                         Else
                             Dim num = CInt(Val(column.ToString()))
 
                             Dim numexists = (From t In [Enum].GetValues(tpe) Where t = num Select t).Any()
                             If (numexists) Then
-                                item.SetValue(headCol, num)
+                                item.SetValue(headCol, num, mappings)
                             End If
                         End If
                     Catch ex As Exception
@@ -335,15 +392,23 @@ Public Module Extensions
     End Function
 
     <Extension>
-    Public Function GetPropertyType(Of TItem As {Class})(item As TItem, propertyName As String) As Type
+    public Function GetProperty(Of TItem As {Class})(item As TItem, propertyName As String, optional mappings as Dictionary(Of string, string) = nothing) As PropertyInfo
         Dim pName = propertyName
-        'Dim mappings = GetDefinedMappings(item)
-        'If (mappings.ContainsKey(propertyName)) Then
-        '    pName = mappings(propertyName)
-        'End If
+        If (mappings is nothing) then
+            mappings = GetDefinedMappings(item)
+        end if
+        If (mappings.ContainsKey(propertyName)) Then
+            pName = mappings(propertyName)
+        End If
 
         Dim tp As Type = item.GetType
         Dim prop = tp.GetProperty(pName)
+        Return prop
+    End Function
+
+    <Extension>
+    Public Function GetPropertyType(Of TItem As {Class})(item As TItem, propertyName As String, optional mappings as Dictionary(Of string, string) = nothing) As Type
+        Dim prop = item.GetProperty(propertyName, mappings)
 
         If (prop IsNot Nothing) Then
             Return prop.PropertyType
@@ -351,47 +416,24 @@ Public Module Extensions
         Return GetType(String)
     End Function
     <Extension>
-    Public Sub SetValue(Of TItem As {Class})(item As TItem, propertyName As String, value As Object)
-        Dim pName = propertyName
-        'Dim mappings = GetDefinedMappings(item)
-        'If (mappings.ContainsKey(propertyName)) Then
-        '    pName = mappings(propertyName)
-        'End If
-
-        Dim tp As Type = item.GetType
-        Dim prop = tp.GetProperty(pName)
-
+    Public Sub SetValue(Of TItem As {Class})(item As TItem, propertyName As String, value As Object, optional mappings as Dictionary(Of string, string) = nothing)
+        Dim prop = item.GetProperty(propertyName, mappings)
         If (prop IsNot Nothing AndAlso prop.CanWrite) Then
             prop.SetValue(item, value, Nothing)
         End If
     End Sub
     <Extension>
-    Public Function GetValue(Of TItem As {Class})(item As TItem, propertyName As String) As Object
-        Dim pName = propertyName
-        'Dim mappings = GetDefinedMappings(item)
-        'If (mappings.ContainsKey(propertyName)) Then
-        '    pName = mappings(propertyName)
-        'End If
-
+    Public Function GetValue(Of TItem As {Class})(item As TItem, propertyName As String, optional mappings as Dictionary(Of string, string) = nothing) As Object
+        Dim prop = item.GetProperty(propertyName, mappings)
         Dim retVal As Object = Nothing
-        Dim tp As Type = item.GetType
-        Dim prop = tp.GetProperty(pName)
         If (prop IsNot Nothing AndAlso prop.CanRead) Then
             retVal = prop.GetValue(item, Nothing)
         End If
-
         Return retVal
     End Function
     <Extension>
-    Public Function DoesPropertyExist(Of TItem As {Class})(item As TItem, propertyName As String) As Boolean
-        Dim pName = propertyName
-        'Dim mappings = GetDefinedMappings(item)
-        'If (mappings.ContainsKey(propertyName)) Then
-        '    pName = mappings(propertyName)
-        'End If
-        ' Dim retVal As Object = Nothing
-        Dim tp As Type = item.GetType
-        Dim prop = tp.GetProperty(pName)
+    Public Function DoesPropertyExist(Of TItem As {Class})(item As TItem, propertyName As String, optional mappings as Dictionary(Of string, string) = nothing) As Boolean
+        Dim prop = item.GetProperty(propertyName, mappings)
         Return (prop IsNot Nothing)
     End Function
     <Extension>

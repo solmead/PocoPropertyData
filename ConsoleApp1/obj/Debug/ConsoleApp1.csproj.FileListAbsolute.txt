@@ -1,0 +1,9 @@
+F:\Libraries\PocoPropertyData\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+F:\Libraries\PocoPropertyData\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+F:\Libraries\PocoPropertyData\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+F:\Libraries\PocoPropertyData\ConsoleApp1\bin\Debug\PocoPropertyData.dll
+F:\Libraries\PocoPropertyData\ConsoleApp1\bin\Debug\PocoPropertyData.pdb
+F:\Libraries\PocoPropertyData\ConsoleApp1\bin\Debug\PocoPropertyData.xml
+F:\Libraries\PocoPropertyData\ConsoleApp1\obj\Debug\ConsoleApp1.csprojResolveAssemblyReference.cache
+F:\Libraries\PocoPropertyData\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+F:\Libraries\PocoPropertyData\ConsoleApp1\obj\Debug\ConsoleApp1.pdb
