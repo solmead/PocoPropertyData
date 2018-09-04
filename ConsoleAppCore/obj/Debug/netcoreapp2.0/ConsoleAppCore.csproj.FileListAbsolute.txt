@@ -1,0 +1,12 @@
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Debug\netcoreapp2.0\ConsoleAppCore.deps.json
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Debug\netcoreapp2.0\ConsoleAppCore.runtimeconfig.json
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Debug\netcoreapp2.0\ConsoleAppCore.runtimeconfig.dev.json
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Debug\netcoreapp2.0\ConsoleAppCore.csprojResolveAssemblyReference.cache
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Debug\netcoreapp2.0\ConsoleAppCore.csproj.CoreCompileInputs.cache
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Debug\netcoreapp2.0\ConsoleAppCore.AssemblyInfo.cs
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Debug\netcoreapp2.0\ConsoleAppCore.dll
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Debug\netcoreapp2.0\ConsoleAppCore.pdb
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Debug\netcoreapp2.0\Utilities.PocoProperties.dll
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Debug\netcoreapp2.0\Utilities.PocoProperties.pdb
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Debug\netcoreapp2.0\ConsoleAppCore.dll
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Debug\netcoreapp2.0\ConsoleAppCore.pdb

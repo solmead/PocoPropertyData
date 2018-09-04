@@ -1,0 +1,15 @@
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\libhostpolicy.so
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\libhostfxr.so
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.deps.json
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.runtimeconfig.json
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.runtimeconfig.dev.json
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.dll
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.pdb
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\Utilities.PocoProperties.dll
+F:\Libraries\PocoPropertyData\ConsoleAppCore\bin\Release\netcoreapp2.0\ubuntu.16.10-x64\Utilities.PocoProperties.pdb
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.csprojResolveAssemblyReference.cache
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.csproj.CoreCompileInputs.cache
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.AssemblyInfo.cs
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.dll
+F:\Libraries\PocoPropertyData\ConsoleAppCore\obj\Release\netcoreapp2.0\ubuntu.16.10-x64\ConsoleAppCore.pdb
