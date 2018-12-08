@@ -11,8 +11,19 @@
     <iconUrl>https://github.com/solmead/PocoPropertyData</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>SInitial Release.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags></tags>
+    <releaseNotes>
+      The PocoPropertyData library has been renamed to Utilities.Poco.
+      This package is empty, but will install the new package.
+    </releaseNotes>
+    <dependencies>
+      <group>
+        <dependency id="Utilities.Poco" version="2.2.2" />
+      </group>
+    </dependencies>
   </metadata>
+  <files>
+    <file src="pocoproperty/readme.txt" target=""/>
+  </files>
 </package>

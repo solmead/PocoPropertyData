@@ -1,9 +1,0 @@
-F:\Libraries\PocoPropertyData\ConsoleAppFramework\obj\Debug\ConsoleAppFramework.csprojResolveAssemblyReference.cache
-F:\Libraries\PocoPropertyData\ConsoleAppFramework\obj\Debug\ConsoleAppFramework.csproj.CoreCompileInputs.cache
-F:\Libraries\PocoPropertyData\ConsoleAppFramework\bin\Debug\ConsoleAppFramework.exe.config
-F:\Libraries\PocoPropertyData\ConsoleAppFramework\bin\Debug\ConsoleAppFramework.exe
-F:\Libraries\PocoPropertyData\ConsoleAppFramework\bin\Debug\ConsoleAppFramework.pdb
-F:\Libraries\PocoPropertyData\ConsoleAppFramework\bin\Debug\Utilities.PocoProperties.dll
-F:\Libraries\PocoPropertyData\ConsoleAppFramework\bin\Debug\Utilities.PocoProperties.pdb
-F:\Libraries\PocoPropertyData\ConsoleAppFramework\obj\Debug\ConsoleAppFramework.exe
-F:\Libraries\PocoPropertyData\ConsoleAppFramework\obj\Debug\ConsoleAppFramework.pdb

@@ -1,7 +1,0 @@
-F:\Libraries\PocoPropertyData\Utilities.PocoProperties\bin\Debug\netstandard1.4\Utilities.PocoProperties.deps.json
-F:\Libraries\PocoPropertyData\Utilities.PocoProperties\bin\Debug\netstandard1.4\Utilities.PocoProperties.dll
-F:\Libraries\PocoPropertyData\Utilities.PocoProperties\bin\Debug\netstandard1.4\Utilities.PocoProperties.pdb
-F:\Libraries\PocoPropertyData\Utilities.PocoProperties\obj\Debug\netstandard1.4\Utilities.PocoProperties.csprojResolveAssemblyReference.cache
-F:\Libraries\PocoPropertyData\Utilities.PocoProperties\obj\Debug\netstandard1.4\Utilities.PocoProperties.AssemblyInfo.cs
-F:\Libraries\PocoPropertyData\Utilities.PocoProperties\obj\Debug\netstandard1.4\Utilities.PocoProperties.dll
-F:\Libraries\PocoPropertyData\Utilities.PocoProperties\obj\Debug\netstandard1.4\Utilities.PocoProperties.pdb
